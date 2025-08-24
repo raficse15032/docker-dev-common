@@ -7,7 +7,11 @@ services:
     - "${ADMINER_PUBLISH_PORT}:${ADMINER_DEFAULT_PORT}"
     depends_on:
       - mysql
-    environment:
-      ADMINER_DEFAULT_SERVER: mysql
+    env_file:
+      - ./mysql/.env
     networks:
       - docker-dev-common
+
+networks:
+  docker-dev-common:
+    external: true

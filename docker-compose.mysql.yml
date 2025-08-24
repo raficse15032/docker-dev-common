@@ -2,11 +2,8 @@ services:
   mysql:
     image: mysql:8.0.43-debian
     container_name: mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    env_file:
+      - ./mysql/.env
     ports:
     - "${MYSQL_PUBLISH_PORT}:${MYSQL_DEFAULT_PORT}"
     volumes:
@@ -15,3 +12,7 @@ services:
       - docker-dev-common
 volumes:
   mysql_data:
+
+networks:
+  docker-dev-common:
+    external: true

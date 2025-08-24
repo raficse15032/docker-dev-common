@@ -1,0 +1,11 @@
+# Environment files
+.env
+
+# Environment files in subdirectories
+kafka/.env
+mysql/.env
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+.docker

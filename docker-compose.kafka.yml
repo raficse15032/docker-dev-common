@@ -1,0 +1,41 @@
+services:
+  kafka:
+    image: apache/kafka:4.0.1-rc0
+    container_name: kafka
+    hostname: kafka
+    user: root
+    ports:
+      - "${KAFKA_PUBLISH_PORT}:${KAFKA_DEFAULT_PORT}"
+      - "${KAFKA_CONTROLLER_PUBLISH_PORT}:${KAFKA_CONTROLLER_DEFAULT_PORT}"
+    env_file:
+      - ./kafka/.env
+    volumes:
+      - kafka_data:/tmp/kraft-combined-logs
+    networks:
+      - docker-dev-common
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:v0.7.2
+    container_name: kafka-ui
+    ports:
+      - "${KAFKA_UI_PUBLISH_PORT}:${KAFKA_UI_DEFAULT_PORT}"
+    env_file:
+      - ./kafka/.env
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - docker-dev-common
+
+volumes:
+  kafka_data:
+
+networks:
+  docker-dev-common:
+    external: true
