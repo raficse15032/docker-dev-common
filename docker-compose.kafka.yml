@@ -5,8 +5,7 @@ services:
     hostname: kafka
     user: root
     ports:
-      - "${KAFKA_PUBLISH_PORT}:${KAFKA_DEFAULT_PORT}"
-      - "${KAFKA_CONTROLLER_PUBLISH_PORT}:${KAFKA_CONTROLLER_DEFAULT_PORT}"
+      - "${KAFKA_EXTERNAL_PUBLISH_PORT}:${KAFKA_EXTERNAL_DEFAULT_PORT}"
     env_file:
       - ./kafka/.env
     volumes:

@@ -2,7 +2,7 @@ services:
   adminer:
     image: adminer:5.3.0
     container_name: adminer
-    restart: always
+    restart: no
     ports:
     - "${ADMINER_PUBLISH_PORT}:${ADMINER_DEFAULT_PORT}"
     depends_on:
