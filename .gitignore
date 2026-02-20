@@ -4,6 +4,7 @@
 # Environment files in subdirectories
 kafka/.env
 mysql/.env
+elasticsearch/.env
 
 # Docker
 .dockerignore

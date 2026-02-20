@@ -3,10 +3,10 @@ services:
     image: dpage/pgadmin4:9.11.0
     container_name: pgadmin
     hostname: pgadmin
-    ports:
-      - "${PGADMIN_PUBLISH_PORT:-5050}:80"
     env_file:
       - ./pgadmin/.env
+    ports:
+      - "${PGADMIN_PUBLISH_PORT}:${PGADMIN_DEFAULT_PORT}"
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     networks:

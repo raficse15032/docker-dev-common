@@ -10,9 +10,13 @@ docker-dev-common/
 ├── docker-compose.mysql.yml        # MySQL database service
 ├── docker-compose.adminer-mysql.yml # Adminer database management
 ├── docker-compose.kafka.yml        # Apache Kafka with KRaft mode
+├── docker-compose.elasticsearch.yml # Elasticsearch and Kibana
 ├── docker-compose.override.yml     # Development overrides (optional)
 ├── .env                            # Main environment variables
 ├── .gitignore                      # Git ignore rules
+├── elasticsearch/
+│   ├── .env                        # Elasticsearch and Kibana environment variables
+│   └── .env.example               # Elasticsearch environment template
 ├── kafka/
 │   ├── .env                        # Kafka-specific environment variables
 │   └── .env.example               # Kafka environment template
@@ -60,6 +64,22 @@ docker-dev-common/
   - Health checks configured
   - Performance-optimized JVM settings
 
+### Elasticsearch & Kibana
+- **File**: `docker-compose.elasticsearch.yml`
+- **Images**: 
+  - Elasticsearch: `docker.elastic.co/elasticsearch/elasticsearch:8.12.0`
+  - Kibana: `docker.elastic.co/kibana/kibana:8.12.0`
+- **Environment**: `elasticsearch/.env`
+- **Ports**:
+  - Elasticsearch: 9200 (configurable via `ELASTICSEARCH_PUBLISH_PORT`)
+  - Kibana: 5601 (configurable via `KIBANA_PUBLISH_PORT`)
+- **Features**:
+  - Single-node development setup
+  - Security disabled for easy development
+  - Kibana web interface for data exploration
+  - Health checks configured
+  - Persistent data storage
+
 ## ⚙️ Setup
 
 ### 1. Create the external network
@@ -75,6 +95,7 @@ cp .env.example .env
 # Copy service-specific environment files
 cp kafka/.env.example kafka/.env
 cp mysql/.env.example mysql/.env
+cp elasticsearch/.env.example elasticsearch/.env
 ```
 
 ### 3. Configure environment variables
@@ -114,6 +135,11 @@ docker compose up -d mysql adminer
 docker compose up -d kafka
 ```
 
+**Elasticsearch + Kibana**:
+```bash
+docker compose up -d elasticsearch kibana
+```
+
 ### Stop Services
 ```bash
 # Stop all services
@@ -131,6 +157,8 @@ docker compose down -v
 | Adminer | http://localhost:8081 | 8081 |
 | Kafka | `localhost:9092` | 9092 |
 | Kafka UI | http://localhost:8080 | 8080 |
+| Elasticsearch | http://localhost:9200 | 9200 |
+| Kibana | http://localhost:5601 | 5601 |
 
 ## 📊 Kafka Usage
 
@@ -176,7 +204,59 @@ docker exec -it kafka /opt/kafka/bin/kafka-console-consumer.sh \
   --bootstrap-server localhost:9092
 ```
 
-## 🗄️ MySQL Usage
+## � Elasticsearch & Kibana Usage
+
+### Access Kibana
+Open http://localhost:5601 to access Kibana for:
+- Data exploration and visualization
+- Index management
+- Dev Tools for Elasticsearch queries
+- Log and metric analysis
+
+### Elasticsearch API Examples
+
+**Check cluster health**:
+```bash
+curl http://localhost:9200/_cluster/health?pretty
+```
+
+**Create an index**:
+```bash
+curl -X PUT "http://localhost:9200/my-index" -H 'Content-Type: application/json' -d'
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  }
+}'
+```
+
+**Index a document**:
+```bash
+curl -X POST "http://localhost:9200/my-index/_doc" -H 'Content-Type: application/json' -d'
+{
+  "title": "Test Document",
+  "content": "This is a test document",
+  "timestamp": "2026-02-20T10:00:00"
+}'
+```
+
+**Search documents**:
+```bash
+curl -X GET "http://localhost:9200/my-index/_search?pretty" -H 'Content-Type: application/json' -d'
+{
+  "query": {
+    "match_all": {}
+  }
+}'
+```
+
+**List all indices**:
+```bash
+curl http://localhost:9200/_cat/indices?v
+```
+
+## �🗄️ MySQL Usage
 
 ### Access via Adminer
 1. Open http://localhost:8081

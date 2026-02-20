@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17.2-alpine
+    container_name: postgres
+    hostname: postgres
+    env_file:
+      - ./postgres/.env
+    ports:
+      - "${POSTGRESQL_PUBLISH_PORT}:${POSTGRESQL_DEFAULT_PORT}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - docker-dev-common
+    restart: no
+
+volumes:
+  postgres_data:
+
+networks:
+  docker-dev-common:
+    external: true
